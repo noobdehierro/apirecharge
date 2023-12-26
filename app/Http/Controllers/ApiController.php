@@ -28,8 +28,9 @@ class ApiController extends Controller
         ])->get($endpoint, $body);
 
         $responseObject = json_decode($response);
+        // return $responseObject;
 
-        if (isset($responseObject->status) != 'success') {
+        if (isset($responseObject->status) && $responseObject->status != 'success') {
             return response()->json([
                 'status' => 'fail',
                 'offerings' => $offerings
