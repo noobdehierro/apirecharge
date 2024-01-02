@@ -14,6 +14,7 @@ class Order extends Model
         'sales_type',
         'offering_id',
         'msisdn',
+        'email',
         'payment_method',
         'payment_id',
         'reference_id',

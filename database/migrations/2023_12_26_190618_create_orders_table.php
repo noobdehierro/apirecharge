@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('sales_type');
             $table->string('offering_id');
             $table->string('offering_name')->nullable();
-            $table->string('msisdn')->nullable();
             $table->decimal('amount')->default(0);
+            $table->string('msisdn')->nullable();
+            $table->string('email')->nullable();
             $table->string('me_reference_id')->nullable();
             $table->string('payment_method')->nullable();
             $table->string('payment_id')->nullable();

@@ -23,4 +23,6 @@ Route::get('/getOffers', [ApiController::class, 'getOffers']);
 
 Route::post('/saveOrder', [ApiController::class, 'saveOrder']);
 
-Route::post('/postOffer', [ApiController::class, 'postOffer']);
+// Route::post('/postOffer', [ApiController::class, 'postOffer']);
+
+// Route::post('/getConektaReference', [ApiController::class, 'getConektaReference']);

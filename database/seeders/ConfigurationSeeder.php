@@ -60,6 +60,34 @@ class ConfigurationSeeder extends Seeder
                 'group' => 'BIP',
                 'is_protected' => true
             ],
+            [
+                'label' => 'Conekta Public API Key',
+                'code' => 'conekta_public_api_key',
+                'value' => 'key_Xzqg1uCcKt72NCjp07KkyhA',
+                'group' => 'Payment',
+                'is_protected' => true
+            ],
+            [
+                'label' => 'Conekta Private API Key',
+                'code' => 'conekta_private_api_key',
+                'value' => 'key_9pJAzqnjfHjwpL4CUvVhve3',
+                'group' => 'Payment',
+                'is_protected' => true
+            ],
+            [
+                'label' => 'Conekta Public API Key Sandbox',
+                'code' => 'conekta_public_api_key_sandbox',
+                'value' => 'key_F6vgsqYFZXnzxMUpXVCoWpw',
+                'group' => 'Payment',
+                'is_protected' => true
+            ],
+            [
+                'label' => 'Conekta Private API Key Sandbox',
+                'code' => 'conekta_private_api_key_sandbox',
+                'value' => 'key_gEmx4y9RkpQmqADqqxy1zw',
+                'group' => 'Payment',
+                'is_protected' => true
+            ]
         ];
 
         foreach ($configurations as $configuration) {
