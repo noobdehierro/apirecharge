@@ -21,7 +21,7 @@ class ConfigurationSeeder extends Seeder
             [
                 'label' => 'Sandbox',
                 'code' => 'is_sandbox',
-                'value' => 'true',
+                'value' => 'false',
                 'group' => 'General',
                 'is_protected' => true
             ],

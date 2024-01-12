@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Configuration;
+use App\Models\IgClientsStorePay;
+use App\Models\IgOrdersRecharge;
 use App\Models\Order;
 use DateInterval;
 use DateTime;
@@ -85,33 +87,69 @@ class ApiController extends Controller
 
         $response = json_decode($this->conekta_generated_pay($request->offering_name, $request->offering_price, $request->offering_id, $request->msisdn, $request->email));
 
+
+
         $me_reference_id = "PWAR" . substr(uniqid(), -10);
 
-        $barcode_url = $response->charges->data[0]->payment_method->barcode_url;
-        $reference = $response->charges->data[0]->payment_method->reference;
-        $payment_request_id = $response->charges->data[0]->id;
-        $order_id = $response->charges->data[0]->order_id;
-        $store_name = $response->charges->data[0]->payment_method->store_name;
+        $barcode_url = $response->charges->data[0]->payment_method->barcode_url ?? null;
+        $conekta_order_id = $response->id ?? null;
+        $referencia_conekta = $response->charges->data[0]->payment_method->reference ?? null;
 
-        $order = Order::create([
-            'msisdn' => $request->msisdn,
-            'email' => $request->email,
-            'offering_name' => $request->offering_name,
-            'amount' => $request->offering_price,
-            'offering_id' => $request->offering_id,
-            'me_reference_id' => $me_reference_id,
-            'payment_request_id' => $payment_request_id,
-            'payment_id' => $order_id,
-            'status' => 'pending',
-            'sales_type' => 'Recarga',
-            'payment_method' => 'Conekta cash',
-            'reference_id' => $reference
-        ]);
+        try {
+            IgOrdersRecharge::create([
+                'action' => 'store-cash',
+                'plan' => $request->offering_name,
+                'price' => $request->offering_price,
+                'product_id' => $request->offering_id,
+                'msisdn' => $request->msisdn,
+                'koonolEmail' => $request->email,
+                'orderId' => $me_reference_id,
+                'conekta_order_id' => $conekta_order_id,
+                'referencia_conekta' => $referencia_conekta,
+                'estatus' => 'pendiente',
+                'creation_date' => date('Y-m-d H:i:s')
+            ]);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => [$order, $barcode_url, $reference, $order_id, $store_name]
-        ], 200);
+            IgClientsStorePay::create([
+                'action' => 'store-cash',
+                'plan' => $request->offering_name,
+                'price' => $request->offering_price,
+                'productId' => $request->offering_id,
+                'msisdn' => $request->msisdn,
+                'orderId' => $conekta_order_id,
+                'referencia' => $referencia_conekta,
+                'type' => 'recarga',
+                'koonolEmail' => $request->email,
+                'creation_date' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($response->object == 'error') {
+
+                return response()->json([
+                    'status' => 'fail',
+                    'message' => $response
+                ], 400);
+            }
+    
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    "offering_name" => $request->offering_name,
+                    "offering_price" => $request->offering_price,
+                    "conekta_order_id" => $conekta_order_id,
+                    "barcode_url" => $barcode_url,
+                    "referencia_conekta" => $referencia_conekta
+                ]
+            ], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'status' => 'fail',
+                'message' => $th->getMessage()
+            ]);
+        }
+
+        
     }
 
     private function getConfiguration()
@@ -241,7 +279,7 @@ class ApiController extends Controller
             ],
             "metadata" => [
                 "productId" => $offering_id,
-                'tipo' => 'PWARecarga',
+                'tipo' => 'Recarga',
             ],
             "charges" => [
                 [
